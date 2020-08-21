@@ -22,6 +22,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c127b90b-6775-44d4-b2ec-0e02d08483c7" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/basil-core/Cargo.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/apis/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/common_types.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/external_structures/application.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/external_structures/group.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/external_structures/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/external_structures/window.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/internal_structures/frame/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/internal_structures/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/internal_structures/shapes/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/lib.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/rendering/colors.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/rendering/images.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/rendering/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/rendering/stroke.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/rendering/two_dimensional.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/sys/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/basil-core/src/sys/os/windows/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/basil.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/basil.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,12 +66,16 @@
     <option name="directoryName" value="ihx4zdp1" />
   </component>
   <component name="ProjectId" id="1gNRvuEaiOWSrvxqJFxDEXwmPd9" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="foldersAlwaysOnTop" value="false" />
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -62,10 +86,82 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Cargo Command.Test internal_structures::shapes::test::line_pixels">
     <configuration default="true" type="Application" factoryName="Application">
       <method v="2">
         <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test colors::test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="test --package basil-core --lib rendering::colors::test" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test internal_structures::shapes::test::eq" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="test --package basil-core --lib internal_structures::shapes::test::eq -- --exact" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test internal_structures::shapes::test::line_pixels" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="test --package basil-core --lib internal_structures::shapes::test::line_pixels -- --exact" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test rendering::colors::test::valid_hex" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="test --package basil-core --lib rendering::colors::test::valid_hex -- --exact" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test shapes::test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="test --package basil-core --lib internal_structures::shapes::test" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="test --workspace" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
     <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
@@ -73,6 +169,23 @@
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Cargo Command.Test" />
+      <item itemvalue="Cargo Command.Test colors::test" />
+      <item itemvalue="Cargo Command.Test rendering::colors::test::valid_hex" />
+      <item itemvalue="Cargo Command.Test internal_structures::shapes::test::eq" />
+      <item itemvalue="Cargo Command.Test shapes::test" />
+      <item itemvalue="Cargo Command.Test internal_structures::shapes::test::line_pixels" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Cargo Command.Test internal_structures::shapes::test::line_pixels" />
+        <item itemvalue="Cargo Command.Test shapes::test" />
+        <item itemvalue="Cargo Command.Test internal_structures::shapes::test::eq" />
+        <item itemvalue="Cargo Command.Test colors::test" />
+        <item itemvalue="Cargo Command.Test rendering::colors::test::valid_hex" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
@@ -85,7 +198,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1597953297618</updated>
-      <workItem from="1597953299216" duration="639000" />
+      <workItem from="1597953299216" duration="14401000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1597953420342</created>
@@ -108,7 +221,14 @@
       <option name="project" value="LOCAL" />
       <updated>1597953924631</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="reserving name in crates.io">
+      <created>1597953952066</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1597953952066</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -126,15 +246,64 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="init" />
     <MESSAGE value="reserving name in crates.io" />
     <option name="LAST_COMMIT_MESSAGE" value="reserving name in crates.io" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="434" y="267" key="Vcs.Push.Dialog.v2" timestamp="1597953926291">
+    <state x="414" y="174" width="1092" height="715" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1597954557467">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="434" y="267" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597953926291" />
+    <state x="414" y="174" width="1092" height="715" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597954557467" />
+    <state x="765" y="235" key="#com.intellij.ide.util.MemberChooser" timestamp="1597978820174">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="765" y="235" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597978820174" />
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1597955186131">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597955186131" />
+    <state width="1877" height="410" key="GridCell.Tab.0.bottom" timestamp="1597980240855">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="410" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597980240855" />
+    <state width="1877" height="410" key="GridCell.Tab.0.center" timestamp="1597980240855">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="410" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597980240855" />
+    <state width="1877" height="410" key="GridCell.Tab.0.left" timestamp="1597980240855">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="410" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597980240855" />
+    <state width="1877" height="410" key="GridCell.Tab.0.right" timestamp="1597980240855">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="410" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597980240855" />
+    <state width="1877" height="344" key="GridCell.Tab.1.bottom" timestamp="1597980081298">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="344" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597980081298" />
+    <state width="1877" height="344" key="GridCell.Tab.1.center" timestamp="1597980081298">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="344" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597980081298" />
+    <state width="1877" height="344" key="GridCell.Tab.1.left" timestamp="1597980081297">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="344" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597980081297" />
+    <state width="1877" height="344" key="GridCell.Tab.1.right" timestamp="1597980081298">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="344" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597980081298" />
+    <state x="598" y="281" key="MultipleFileMergeDialog" timestamp="1597953966164">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="598" y="281" key="MultipleFileMergeDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597953966164" />
+    <state x="434" y="267" key="Vcs.Push.Dialog.v2" timestamp="1597953956439">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="434" y="267" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597953956439" />
     <state x="777" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1597953550701">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -143,5 +312,35 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="761" y="426" key="git4idea.remote.GitConfigureRemotesDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597953407802" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1597976526749">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1597976526749" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/basil-core/src/rendering/colors.rs</url>
+          <line>122</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/basil-core/src/internal_structures/shapes/mod.rs</url>
+          <line>218</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/basil-core/src/internal_structures/shapes/mod.rs</url>
+          <line>161</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/basil-core/src/internal_structures/shapes/mod.rs</url>
+          <line>152</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
