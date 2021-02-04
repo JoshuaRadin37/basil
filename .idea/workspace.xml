@@ -21,31 +21,15 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c127b90b-6775-44d4-b2ec-0e02d08483c7" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/basil-core/src/primitive.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/basil-core/src/statements.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/basil-core/src/variable.rs" afterDir="false" />
+    <list default="true" id="c127b90b-6775-44d4-b2ec-0e02d08483c7" name="Default Changelist" comment="Alright this is now an interpreted language">
+      <change afterPath="$PROJECT_DIR$/basil-core/src/context.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/basil-core/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/apis/mod.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/common_types.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/external_structures/application.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/external_structures/group.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/external_structures/mod.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/external_structures/window.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/internal_structures/frame/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/basil-core/src/expression.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/internal_structures/mod.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/internal_structures/shapes/mod.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/basil-core/src/expression.rs" beforeDir="false" afterPath="$PROJECT_DIR$/basil-core/src/expression.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basil-core/src/function.rs" beforeDir="false" afterPath="$PROJECT_DIR$/basil-core/src/function.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/basil-core/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/basil-core/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/rendering/colors.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/rendering/images.rs" beforeDir="false" afterPath="$PROJECT_DIR$/basil-core/src/function.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/rendering/mod.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/rendering/stroke.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/rendering/two_dimensional.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/sys/mod.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basil-core/src/sys/os/windows/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/basil-core/src/object.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/basil-core/src/object.rs" beforeDir="false" afterPath="$PROJECT_DIR$/basil-core/src/object.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basil-core/src/primitive.rs" beforeDir="false" afterPath="$PROJECT_DIR$/basil-core/src/primitive.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basil-core/src/variable.rs" beforeDir="false" afterPath="$PROJECT_DIR$/basil-core/src/variable.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -228,7 +212,7 @@
       <workItem from="1598294562286" duration="735000" />
       <workItem from="1598486573078" duration="61000" />
       <workItem from="1612398180313" duration="164000" />
-      <workItem from="1612398368859" duration="11101000" />
+      <workItem from="1612398368859" duration="12020000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1597953420342</created>
@@ -265,7 +249,14 @@
       <option name="project" value="LOCAL" />
       <updated>1597980437008</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Alright this is now an interpreted language">
+      <created>1612469708503</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1612469708503</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -288,7 +279,8 @@
     <MESSAGE value="init" />
     <MESSAGE value="reserving name in crates.io" />
     <MESSAGE value="Added a lot of structure for internal apis and how data flow could look like" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added a lot of structure for internal apis and how data flow could look like" />
+    <MESSAGE value="Alright this is now an interpreted language" />
+    <option name="LAST_COMMIT_MESSAGE" value="Alright this is now an interpreted language" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
