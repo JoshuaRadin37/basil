@@ -1,18 +1,2 @@
-[package]
-name = "basil"
-description = "A gui library written in rust"
-version = "0.1.0"
-authors = ["Joshua Radin <jradn16@gmail.com>"]
-edition = "2018"
-license-file = "LICENSE"
-repository = "https://github.com/JoshuaRadin37/basil"
-readme = "readme.md"
-exclude = [".idea/*"]
-
 [workspace]
 members = ["basil-core"]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-basil-core = { path = "basil-core"}
