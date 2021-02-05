@@ -2,6 +2,7 @@ use crate::variable::{Variable, IntoVariable};
 use std::collections::HashMap;
 use crate::context::Context;
 use crate::object::Object;
+use crate::code_block::Executable;
 
 pub struct Expression {
     head: Variable,
@@ -27,5 +28,11 @@ pub enum ExpressionTail {
     CallMethod {
         positional: Vec<Variable>,
         named: HashMap<String, Variable>
+    }
+}
+
+impl Executable for Expression {
+    fn execute(&self, context: &mut Context) -> Variable {
+        self.evaluate(context)
     }
 }

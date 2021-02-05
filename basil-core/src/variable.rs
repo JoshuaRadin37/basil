@@ -24,7 +24,7 @@ pub trait IntoVariable {
     fn into_variable(self) -> Variable;
 }
 
-impl <V : Into<Variable>> IntoVariable for Variable {
+impl <V : Into<Variable>> IntoVariable for V {
     fn into_variable(self) -> Variable {
         self.into()
     }
