@@ -1,2 +1,6 @@
 [workspace]
-members = ["basil-core"]
+members = [
+    "basil-core",
+    "basil-ast",
+    "basil-frontend"
+]
