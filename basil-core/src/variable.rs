@@ -1,5 +1,5 @@
 use std::sync::{RwLock, Arc};
-use crate::object::Object;
+use crate::object::{Object, DeepClone};
 
 #[derive(Debug, Clone)]
 pub struct Variable {
@@ -15,8 +15,14 @@ impl Variable {
         Variable::from(o)
     }
 
+    /// Creates a deep clone of this variable
     pub fn deep_clone(&self) -> Variable {
+        Variable::from(self.inner.read().expect("Item poisoned").deep_clone())
+    }
 
+    /// Gets the inner backing ARC
+    pub(crate) fn to_inner(&self) -> &Arc<RwLock<Object>> {
+        &self.inner
     }
 }
 

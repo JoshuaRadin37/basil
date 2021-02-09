@@ -1,14 +1,14 @@
 use std::collections::HashMap;
 use crate::variable::Variable;
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 use std::marker::PhantomData;
 use crate::object::Object;
 
 #[derive(Default, Debug)]
 pub struct Context<'c> {
-    parent: Option<Box<Context<'c>>>,
+    parent: Option<&'c mut Context<'c>>,
     variables: HashMap<String, Variable>,
-    _phantom: &'c PhantomData<()>
+    // _phantom: &'c PhantomData<()>
 }
 
 impl<'c> Context<'c> {
@@ -28,24 +28,24 @@ impl<'c> Context<'c> {
         ret
     }
 
-    pub fn higher_scope<'d : 'c>(self) -> Arc<Context<'d>> {
+    pub fn higher_scope<'d : 'c>(&mut self) -> Arc<Context<'d>> {
         Arc::new(Context {
-            parent: Some(Box::new(self)),
+            parent: Some(self),
             variables: Default::default(),
-            _phantom: &Default::default()
+            // _phantom: &Default::default()
         })
     }
 
-    pub fn push<'d, 'e>(self, other: Context<'e>) -> Context<'d>
+    pub fn push<'d, 'e>(&mut self, other: Context<'e>) -> Context<'d>
         where
             'd : 'c,
             'e : 'c,
             'd : 'e {
 
         let mut next = Context {
-            parent: Some(Box::new(self)),
+            parent: Some(self),
             variables: other.variables.clone(),
-            _phantom: &Default::default()
+            // _phantom: &Default::default()
         };
 
         next
@@ -99,7 +99,7 @@ impl<'c> Context<'c> {
             variables: mapping.iter()
                 .map(|(key, val)| (format!("{}", key.as_hashmap_string().expect("Can't turn this into a context variable")), val.clone()))
                 .collect(),
-            _phantom: &Default::default()
+            // _phantom: &Default::default()
         }
     }
 

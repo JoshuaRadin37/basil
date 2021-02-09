@@ -11,6 +11,14 @@ impl Object {
     pub fn new(primitive: Primitive) -> Self {
         Object { primitive }
     }
+
+    pub(crate) fn as_primitive(&self) -> &Primitive {
+        &self.primitive
+    }
+
+    pub(crate) fn as_primitive_mut(&mut self) -> &mut Primitive {
+        &mut self.primitive
+    }
 }
 
 pub trait DeepClone {
@@ -20,20 +28,6 @@ pub trait DeepClone {
 impl DeepClone for Object {
     fn deep_clone(&self) -> Self {
         Self::new(self.primitive.deep_clone())
-    }
-}
-
-impl PartialEq for Object {
-    fn eq(&self, other: &Self) -> bool {
-        self.primitive.eq(other)
-    }
-}
-
-impl Eq for Object { }
-
-impl Hash for Object {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.primitive.hash(state)
     }
 }
 

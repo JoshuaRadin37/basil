@@ -1,8 +1,9 @@
-use crate::variable::{Variable, IntoVariable};
 use std::collections::HashMap;
+
+
 use crate::context::Context;
 use crate::object::Object;
-use crate::code_block::Executable;
+use crate::variable::{IntoVariable, Variable};
 
 pub struct Expression {
     head: Variable,
@@ -14,13 +15,6 @@ impl Expression {
         Expression { head, tail: tail.map(Box::new) }
     }
 
-    pub fn evaluate(&self, context: &mut Context) -> Variable {
-        if let Some(tail) = self.tail {
-
-        } else {
-
-        }
-    }
 }
 
 pub enum ExpressionTail {
@@ -31,8 +25,11 @@ pub enum ExpressionTail {
     }
 }
 
+/*
 impl Executable for Expression {
     fn execute(&self, context: &mut Context) -> Variable {
         self.evaluate(context)
     }
 }
+
+ */

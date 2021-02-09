@@ -3,7 +3,7 @@ use crate::object::Object;
 use crate::variable::Variable;
 use std::sync::atomic::AtomicUsize;
 use std::hash::{Hash, Hasher};
-use crate::code_block::{CodeBlock, Executable};
+use crate::code_block::{CodeBlock};
 use crate::context::Context;
 
 static FUNCTION_COUNT: AtomicUsize = AtomicUsize::new(0);
@@ -41,11 +41,13 @@ impl Hash for Function {
         self.id.hash(state)
     }
 }
-
+/*
 impl Executable for Function {
     fn execute(&self, context: &mut Context<'c>) -> Variable {
         unimplemented!()
     }
 }
+
+ */
 
 

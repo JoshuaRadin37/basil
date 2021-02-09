@@ -2,5 +2,6 @@
 members = [
     "basil-core",
     "basil-ast",
-    "basil-frontend"
+    "basil-frontend",
+    "basil-interpreter"
 ]

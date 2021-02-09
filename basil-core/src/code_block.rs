@@ -15,13 +15,3 @@ impl CodeBlock {
 }
 
 
-pub trait Executable {
-
-    fn execute(&self, context: &mut Context) -> Variable;
-}
-
-impl Executable for CodeBlock {
-    fn execute(&self, context: &mut Context) -> Variable {
-
-    }
-}
