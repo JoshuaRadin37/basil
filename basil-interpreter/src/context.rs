@@ -76,9 +76,16 @@ impl ContextGraph {
         let mut mapping = HashMap::new();
         for node in all_nodes {
             let context = &self.context_graph[node];
-            for (key, value) in &context.data {
-
+            let mut iterator: &mut dyn Iterator<Item=(&String, &Variable)> = &mut context.data.into_iter();
+            for (key, value) in iterator {
+                if !mapping.contains_key(key) {
+                    mapping.insert(key.clone(), value);
+                }
             }
+        }
+
+        CollectedContext {
+            data: mapping
         }
     }
 
@@ -87,9 +94,9 @@ impl ContextGraph {
 
 #[derive(Debug, Default)]
 pub struct Context {
-    data: Dictionary
+    data: HashMap<String, Variable>
 }
 
 pub struct CollectedContext<'a> {
-    data: HashMap<&'a Object, &'a Variable>
+    data: HashMap<String, &'a Variable>
 }
