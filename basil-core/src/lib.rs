@@ -27,6 +27,6 @@ pub trait Executor<T> {
 }
 
 pub trait FullExecutor:
-    Executor<Expression> + Executor<Statement> + Executor<CodeBlock> + Executor<Function>
+    Executor<Expression> + Executor<Statement> + Executor<CodeBlock> + Executor<Function> + Sized
 {
 }
