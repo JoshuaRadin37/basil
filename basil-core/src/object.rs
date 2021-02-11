@@ -44,3 +44,15 @@ impl DerefMut for Object {
         &mut self.primitive
     }
 }
+
+impl From<Primitive> for Object {
+    fn from(p: Primitive) -> Self {
+        Object::new(p)
+    }
+}
+
+impl<S: AsRef<str>> From<S> for Object {
+    fn from(s: S) -> Self {
+        Object::new(Primitive::from(s))
+    }
+}

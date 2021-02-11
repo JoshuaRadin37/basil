@@ -1,107 +1,92 @@
-use std::collections::HashMap;
-use crate::variable::Variable;
-use std::sync::{Arc, RwLock};
-use std::marker::PhantomData;
+use crate::dictionary::{Dictionary, IntoDictionary};
 use crate::object::Object;
+use crate::variable::Variable;
+use crate::{Executor, FullExecutor};
+use std::collections::HashMap;
+use std::marker::PhantomData;
+use std::ops::{Deref, DerefMut};
+use std::sync::{Arc, RwLock};
 
 #[derive(Default, Debug)]
-pub struct Context<'c> {
-    parent: Option<&'c mut Context<'c>>,
-    variables: HashMap<String, Variable>,
+pub struct Context {
+    parent: Option<Context>,
+    variables: Dictionary,
     // _phantom: &'c PhantomData<()>
 }
 
-impl<'c> Context<'c> {
-
+impl Context {
     pub fn base() -> Self {
         let mut ret = Context::default();
         // basic_print function
-        let basic_print =
-            |context: &mut Context| -> bool {
-                let string = context.get("0").unwrap();
-
-
-                true
-            };
-
 
         ret
     }
 
-    pub fn higher_scope<'d : 'c>(&mut self) -> Arc<Context<'d>> {
-        Arc::new(Context {
+    pub fn higher_scope(self) -> Context {
+        Context {
             parent: Some(self),
             variables: Default::default(),
             // _phantom: &Default::default()
-        })
+        }
     }
 
-    pub fn push<'d, 'e>(&mut self, other: Context<'e>) -> Context<'d>
-        where
-            'd : 'c,
-            'e : 'c,
-            'd : 'e {
-
-        let mut next = Context {
-            parent: Some(self),
-            variables: other.variables.clone(),
-            // _phantom: &Default::default()
-        };
-
-        next
+    pub fn push(self, mut other: Context) -> Context {
+        other.parent = Some(self);
+        other
     }
-
 
     pub fn pop(self) -> Option<Self> {
-        let Context { parent, ..} = self;
-        parent.map(|p| *p)
+        let Context { parent, .. } = self;
+        parent
     }
 
-    pub fn get(&self, id: &str) -> Option<&Variable> {
-        match self.variables.get(&id.to_string()) {
-            None => {
-                match &self.parent {
-                    None => { None }
-                    Some(parent) => {
-                        parent.get(id)
-                    }
-                }
-            }
-            Some(ret) => {
-                Some(ret)
+    /*
+    pub fn get<E : FullExecutor>(&self, id: &str, executor: &mut E) -> Option<&Variable> {
+        unsafe {
+            let mut mutable_self = &mut *(self as *const Self as *mut Self);
+            match self.variables.get(&id.to_string(), ) {
+                None => match &self.parent {
+                    None => None,
+                    Some(parent) => parent.get(id),
+                },
+                Some(ret) => Some(ret),
             }
         }
     }
 
-    pub fn get_mut(&mut self, id: &str) -> Option<&mut Variable> {
-        match self.variables.get_mut(&id.to_string()) {
-            None => {
-                match &mut self.parent {
-                    None => { None }
-                    Some(parent) => {
-                        parent.get_mut(id)
-                    }
-                }
-            }
-            Some(ret) => {
-                Some(ret)
-            }
+     */
+
+    pub fn get_mut<E: FullExecutor>(
+        &mut self,
+        id: &str,
+        executor: &mut E,
+    ) -> Option<&mut Variable> {
+        match self
+            .variables
+            .get_mut(&mut id.to_string().into(), self, executor)
+        {
+            None => match &mut self.parent {
+                None => None,
+                Some(parent) => parent.get_mut(id, executor),
+            },
+            Some(ret) => Some(ret),
         }
     }
 
-    pub fn insert(&mut self, id: &str, value: Variable) {
-        self.variables.insert(id.to_string(), value);
+    pub fn insert<E: FullExecutor>(&mut self, id: &str, value: Variable, executor: &mut E) {
+        self.variables
+            .insert(id.to_string().into(), value, self, executor);
     }
 
-    pub fn from_mapping(mapping: &HashMap<Object, Variable>) -> Self {
+    pub fn from_mapping<'a, E: FullExecutor, D: IntoDictionary<(&'a Object, &'a Variable)>>(
+        mapping: &D,
+        executor: &'a mut E,
+    ) -> Self {
+        let mut parent = Context::base();
         Context {
             parent: None,
-            variables: mapping.iter()
-                .map(|(key, val)| (format!("{}", key.as_hashmap_string().expect("Can't turn this into a context variable")), val.clone()))
-                .collect(),
+            variables: mapping.into_dictionary(&mut parent, executor),
             // _phantom: &Default::default()
         }
     }
-
 }
-
