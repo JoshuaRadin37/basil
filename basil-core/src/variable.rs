@@ -296,3 +296,9 @@ impl TryFrom<Variable> for bool {
         }
     }
 }
+
+impl IntoVariable for Result<Variable, Exception> {
+    fn into_variable(self) -> Variable {
+        self.unwrap()
+    }
+}

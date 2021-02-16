@@ -48,7 +48,7 @@ macro_rules! basil {
             var
         }
     };
-    ($variable:ident $(.$member:ident)+ = $value:expr) => {
+    ($variable:ident $(.$member:ident)+ = $($value:tt)+) => {
         {
             let mut var: Result<Variable, Exception> = Ok($variable.clone());
             $(
@@ -60,7 +60,7 @@ macro_rules! basil {
             )*
             if let Ok(var) = var {
                 let mut borrowed = var;
-                borrowed.set_object($value);
+                borrowed.set_object(basil!($($value)*));
             } else {
                 panic!("{} is not a member of {}, so its value can't be set", stringify!($($member).*), stringify!($variable))
             }
@@ -79,7 +79,7 @@ macro_rules! basil {
             var
         }
     };
-    ($variable:ident $([$member:expr])+ = $value:expr) => {
+    ($variable:ident $([$member:expr])+ = $($value:tt)+) => {
         {
             let mut var: Result<Variable, Exception> = Ok($variable.clone());
             $(
@@ -91,7 +91,7 @@ macro_rules! basil {
             )*
             if let Ok(var) = var {
                 let mut borrowed = var;
-                borrowed.set_object($value);
+                borrowed.set_object(basil!($value));
             } else {
                 panic!("{} is not a member of {}, so its value can't be set", stringify!($($member).*), stringify!($variable))
             }
@@ -103,6 +103,9 @@ macro_rules! basil {
 
 
      };
+     ($expr:expr) => {
+        $expr.into_variable()
+     }
 }
 
 impl Interpreter {
@@ -388,5 +391,21 @@ mod tests {
         let dict_var2: i32 = basil!(dict["var2"]).unwrap().try_into().unwrap();
         assert_eq!(dict_var1, 2);
         assert_eq!(dict_var2, 1);
+    }
+
+    #[test]
+    fn layered_dict() {
+        let mut dict1 = Dictionary::with_entries(&["var1", "var2"]).into_variable();
+        let mut dict2 = Dictionary::with_entries(&["var3"]).into_variable();
+        basil!(dict1.var1 = dict2.clone());
+        basil!(dict1.var2 = dict1.var1);
+        println!("{:?}", dict1);
+        println!("{:?}", dict2);
+        basil!(dict2.var3 = "Hello, World!");
+        println!("{:?}", dict1);
+        println!("{:?}", dict2);
+        basil!(dict1.var1.var3 = "Goodbye, World!");
+        println!("{:?}", dict1);
+        println!("{:?}", dict2);
     }
 }
