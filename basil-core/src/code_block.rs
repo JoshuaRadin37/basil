@@ -1,10 +1,10 @@
-use crate::statements::Statement;
-use crate::context::Context;
 use crate::object::Object;
+use crate::statements::Statement;
 use crate::variable::Variable;
 
+#[derive(Debug, Clone)]
 pub struct CodeBlock {
-    statements: Vec<Statement>
+    statements: Vec<Statement>,
 }
 
 impl CodeBlock {
@@ -12,6 +12,7 @@ impl CodeBlock {
         CodeBlock { statements }
     }
 
+    pub fn statements(&self) -> &Vec<Statement> {
+        &self.statements
+    }
 }
-
-

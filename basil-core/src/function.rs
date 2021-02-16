@@ -1,10 +1,9 @@
-use std::collections::HashMap;
+use crate::code_block::CodeBlock;
 use crate::object::Object;
 use crate::variable::Variable;
-use std::sync::atomic::AtomicUsize;
+use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
-use crate::code_block::{CodeBlock};
-use crate::context::Context;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 static FUNCTION_COUNT: AtomicUsize = AtomicUsize::new(0);
 
@@ -12,42 +11,45 @@ static FUNCTION_COUNT: AtomicUsize = AtomicUsize::new(0);
 pub struct Function {
     id: usize,
     captures: HashMap<String, Variable>,
-    inputs: Vec<String>,
+    positional_arguments: Vec<String>,
+    keyword_arguments: Vec<(String, Object)>,
+    code_block: CodeBlock,
+}
+
+impl Function {
+    pub fn new(
+        captures: HashMap<String, Variable>,
+        positional_arguments: Vec<String>,
+        keyword_arguments: Vec<(String, Object)>,
+        code_block: CodeBlock,
+    ) -> Self {
+        let id = FUNCTION_COUNT.fetch_add(1, Ordering::Acquire);
+        Function {
+            id,
+            captures,
+            positional_arguments,
+            keyword_arguments,
+            code_block,
+        }
+    }
 }
 
 impl Function {
     pub fn id(&self) -> usize {
         self.id
     }
-}
 
-pub enum InnerFunction {
-    Basil(CodeBlock),
-    Rust(Box<dyn Fn(&mut Context) -> bool>)
-}
+    pub fn captures(&self) -> &HashMap<String, Variable> {
+        &self.captures
+    }
+    pub fn positional_arguments(&self) -> &Vec<String> {
+        &self.positional_arguments
+    }
+    pub fn keyword_arguments(&self) -> &Vec<(String, Object)> {
+        &self.keyword_arguments
+    }
 
-impl PartialEq for Function {
-    fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
+    pub fn code_block(&self) -> &CodeBlock {
+        &self.code_block
     }
 }
-
-impl Eq for Function {
-
-}
-
-impl Hash for Function {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.id.hash(state)
-    }
-}
-/*
-impl Executable for Function {
-    fn execute(&self, context: &mut Context<'c>) -> Variable {
-        unimplemented!()
-    }
-}
-
- */
-
-
