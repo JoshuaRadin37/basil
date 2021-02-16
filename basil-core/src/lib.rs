@@ -14,6 +14,7 @@ pub mod expression;
 pub mod function;
 pub mod object;
 pub mod primitive;
+pub mod ptr;
 pub mod statements;
 pub mod type_id;
 pub mod variable;

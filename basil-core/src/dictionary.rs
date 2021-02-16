@@ -6,12 +6,14 @@ use std::borrow::Borrow;
 use std::cell::{Ref, RefCell};
 use std::collections::hash_map::IterMut;
 use std::collections::{BinaryHeap, HashMap, VecDeque};
+use std::fmt::{Debug, Formatter};
 use std::iter::FromIterator;
 
-#[derive(Debug, Clone, Default)]
+#[derive(Clone, Default)]
 pub struct Dictionary {
     values: HashMap<u64, Vec<Variable>>,
     keys: HashMap<u64, Vec<RefCell<Object>>>,
+    len: usize,
 }
 
 impl Dictionary {
@@ -53,6 +55,7 @@ impl Dictionary {
         }
         keys.push(RefCell::new(key));
         values.push(value);
+        self.len += 1;
     }
 
     pub fn get<Hash: FnMut(&mut Object) -> u64, Eq: FnMut(&mut Object, &mut Object) -> bool>(
@@ -111,6 +114,7 @@ impl Dictionary {
         if let Some(index) = found_index {
             let values = self.values.get_mut(&hash_value)?;
             keys.remove(index);
+            self.len -= 1;
             Some(values.remove(index))
         } else {
             None
@@ -118,7 +122,7 @@ impl Dictionary {
     }
 
     pub fn len(&self) -> usize {
-        self.values.len()
+        self.len
     }
 
     pub fn is_empty(&self) -> bool {
@@ -236,6 +240,28 @@ impl<'a> IntoIterator for &'a mut Dictionary {
 }
 
  */
+
+impl Debug for Dictionary {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{{")?;
+        let mut first = true;
+        for hash in self.keys.keys() {
+            let keys = &self.keys[&hash];
+            let values = &self.values[&hash];
+            let zip = keys.iter().zip(values.iter());
+            for (k, v) in zip {
+                let k = k.borrow();
+                if !first {
+                    write!(f, ", ")?;
+                } else {
+                    first = false;
+                }
+                write!(f, "{:?}: {:?}", k, v)?;
+            }
+        }
+        write!(f, "}}")
+    }
+}
 
 impl DeepClone for Dictionary {
     fn deep_clone(&self) -> Self {

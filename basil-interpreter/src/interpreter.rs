@@ -1,25 +1,26 @@
+use std::borrow::Borrow;
 use std::collections::HashMap;
+use std::convert::{TryFrom, TryInto};
+use std::ops::Deref;
 
 use petgraph::graph::NodeIndex;
 
-use basil_core::object::Object;
-use basil_core::primitive::Primitive;
-use basil_core::statements::Statement;
-use basil_core::type_id::TypeId;
-use basil_core::variable::{IntoVariable, Variable};
-
-use crate::context::{Context, ContextGraph, Entry};
-use crate::frame::Frame;
 use basil_core::class::Class;
 use basil_core::code_block::CodeBlock;
 use basil_core::dictionary::Dictionary;
 use basil_core::exception::Exception;
 use basil_core::expression::{Expression, ExpressionTail};
 use basil_core::function::Function;
+use basil_core::object::Object;
+use basil_core::primitive::Primitive;
+use basil_core::statements::Statement;
+use basil_core::type_id::TypeId;
+use basil_core::variable::{IntoVariable, Variable};
 use basil_frontend::span::Span;
-use std::borrow::Borrow;
-use std::convert::{TryFrom, TryInto};
-use std::ops::Deref;
+
+use crate::context::{Context, ContextGraph, Entry};
+use crate::frame::Frame;
+
 pub struct Interpreter {
     context_graph: ContextGraph,
     type_to_context_node: HashMap<TypeId, NodeIndex>,
@@ -47,25 +48,64 @@ macro_rules! basil {
             var
         }
     };
-
-    ($variable:ident $(.$member:ident)+ = $value:expr) => {
+    ($variable:ident $(.$member:ident)+ = $($value:tt)+) => {
         {
-            let mut var: Result<&mut Variable, Exception> = Ok(&mut $variable);
+            let mut var: Result<Variable, Exception> = Ok($variable.clone());
             $(
                 if let Ok(var2) = var {
                     let member = basil_core::object::Object::from(stringify!($member));
-                    let next = var2.get_member_mut(member, basil_core::object::Object::basic_hash, basil_core::object::Object::basic_eq);
+                    let next = var2.get_member(member, basil_core::object::Object::basic_hash, basil_core::object::Object::basic_eq);
                     var = next;
                 }
             )*
             if let Ok(var) = var {
                 let mut borrowed = var;
-                *borrowed = ($value).into_variable();
+                borrowed.set_object(basil!($($value)*));
             } else {
                 panic!("{} is not a member of {}, so its value can't be set", stringify!($($member).*), stringify!($variable))
             }
         }
     };
+    ($variable:ident $([$member:expr])+) => {
+        {
+            let mut var: Result<Variable, Exception> = Ok($variable.clone());
+            $(
+                if let Ok(var2) = var {
+                    let member = basil_core::object::Object::from($member);
+                    let next = var2.get_member(member, Object::basic_hash, Object::basic_eq);
+                    var = next;
+                }
+            )*
+            var
+        }
+    };
+    ($variable:ident $([$member:expr])+ = $($value:tt)+) => {
+        {
+            let mut var: Result<Variable, Exception> = Ok($variable.clone());
+            $(
+                if let Ok(var2) = var {
+                    let member = basil_core::object::Object::from($member);
+                    let next = var2.get_member(member, basil_core::object::Object::basic_hash, basil_core::object::Object::basic_eq);
+                    var = next;
+                }
+            )*
+            if let Ok(var) = var {
+                let mut borrowed = var;
+                borrowed.set_object(basil!($value));
+            } else {
+                panic!("{} is not a member of {}, so its value can't be set", stringify!($($member).*), stringify!($variable))
+            }
+        }
+    };
+    ({}) => {
+
+        basil_core::dictionary::Dictionary::new().into_variable()
+
+
+     };
+     ($expr:expr) => {
+        $expr.into_variable()
+     }
 }
 
 impl Interpreter {
@@ -124,7 +164,8 @@ impl Interpreter {
 
     fn to_block_output(e: Exception, inner_var: Variable) -> Result<Variable, Exception> {
         if let Ok(is_return) = basil!(inner_var.__is_return__) {
-            let object = is_return.to_inner().deref().borrow();
+            let x = is_return.to_inner().get();
+            let object = x.get();
             match bool::try_from(object.as_primitive()) {
                 Ok(is_return) => basil!(inner_var.__return_val__),
                 Err(e) => Err(e),
@@ -172,7 +213,7 @@ impl Interpreter {
                 let mut dictionary =
                     Dictionary::with_entries(&["__is_return__", "__return_val__"]).into_variable();
                 basil!(dictionary.__is_return__ = true);
-                Ok(dictionary.into_variable())
+                Ok(dictionary)
             }
             Statement::Raise(_) => {
                 unimplemented!()
@@ -198,7 +239,8 @@ impl Interpreter {
         let tail = tail.unwrap();
         match tail {
             ExpressionTail::GetMember(member) => {
-                let inner = head.to_inner().deref().borrow();
+                let inner = head.to_inner().get();
+                let inner = inner.get();
                 let mut member_primitive: Object = Primitive::from(member).into();
                 if let Primitive::Dictionary(dict) = inner.as_primitive() {
                     let member =
@@ -229,7 +271,7 @@ impl Interpreter {
         for (key, val) in class.definitions() {
             dictionary.insert(
                 Object::from(key),
-                Variable::from(val.clone()),
+                Variable::new(val.clone()),
                 Object::basic_hash,
                 Object::basic_eq,
             );
@@ -253,13 +295,14 @@ impl Interpreter {
     }
 
     fn find_method_helper(&self, name: &str, var: &Variable) -> Result<Variable, Exception> {
-        let inner = var.to_inner().deref().borrow();
+        let inner = var.to_inner().get();
+        let inner = inner.get();
         let primitive = inner.as_primitive();
         let mut name_object: Object = Primitive::from(name).into();
 
         if let Primitive::Dictionary(dict) = primitive {
             if let Some(var) = dict.get(&mut name_object, Object::basic_hash, Object::basic_eq) {
-                if var.to_inner().deref().borrow().as_primitive().is_function() {
+                if var.to_inner().get().get().as_primitive().is_function() {
                     return Ok(var.clone());
                 } else {
                     Err(format!("{} is not a function in {:?}", name, var))?
@@ -280,7 +323,8 @@ impl Interpreter {
         positional_arguments: Vec<Variable>,
         keywords: Vec<(String, Variable)>,
     ) -> Result<Variable, Exception> {
-        let object = object.to_inner().borrow_mut();
+        let object = object.to_inner().get();
+        let object = object.get_mut();
         let type_id = object.type_id();
         let node_index = self.type_to_context_node[&type_id];
 
@@ -311,6 +355,57 @@ mod tests {
     #[test]
     fn set_member() {
         let mut dict = Dictionary::with_entries(&["var_name"]).into_variable();
+        println!("Dict: {:?}", dict);
         basil!(dict.var_name = true);
+        println!("Dict: {:?}", dict);
+        let var_name = basil!(dict.var_name).unwrap();
+        let ptr = var_name.get_object();
+        let inner = ptr.get();
+        let object = ptr.get();
+        let primitive = object.as_primitive();
+        if let Primitive::Boolean(bl) = primitive {
+            assert_eq!(bl, &true);
+        } else if let b = primitive {
+            panic!(
+                "dict.var_name wasn't set to a boolean, instead set to {:?}",
+                b
+            );
+        }
+    }
+
+    #[test]
+    fn variables_separate() {
+        let mut dict = Dictionary::with_entries(&["var1", "var2"]).into_variable();
+        let val = 0i64.into_variable();
+        basil!(dict.var1 = val.clone());
+        basil!(dict.var2 = val);
+        println!("{:?}", dict);
+        basil!(dict.var1 = 1i32);
+        println!("{:?}", dict);
+        let dict_var1 = basil!(dict.var1).unwrap();
+        basil!(dict.var2 = dict_var1);
+        println!("{:?}", dict);
+        basil!(dict.var1 = 2i32);
+        println!("{:?}", dict);
+        let dict_var1: i32 = basil!(dict["var1"]).unwrap().try_into().unwrap();
+        let dict_var2: i32 = basil!(dict["var2"]).unwrap().try_into().unwrap();
+        assert_eq!(dict_var1, 2);
+        assert_eq!(dict_var2, 1);
+    }
+
+    #[test]
+    fn layered_dict() {
+        let mut dict1 = Dictionary::with_entries(&["var1", "var2"]).into_variable();
+        let mut dict2 = Dictionary::with_entries(&["var3"]).into_variable();
+        basil!(dict1.var1 = dict2.clone());
+        basil!(dict1.var2 = dict1.var1);
+        println!("{:?}", dict1);
+        println!("{:?}", dict2);
+        basil!(dict2.var3 = "Hello, World!");
+        println!("{:?}", dict1);
+        println!("{:?}", dict2);
+        basil!(dict1.var1.var3 = "Goodbye, World!");
+        println!("{:?}", dict1);
+        println!("{:?}", dict2);
     }
 }
