@@ -157,3 +157,9 @@ impl Debug for Primitive {
         }
     }
 }
+
+impl IntoVariable for Primitive {
+    fn into_variable(self) -> Variable {
+        Variable::new(Object::new(self))
+    }
+}

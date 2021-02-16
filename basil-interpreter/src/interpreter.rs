@@ -48,7 +48,6 @@ macro_rules! basil {
             var
         }
     };
-
     ($variable:ident $(.$member:ident)+ = $value:expr) => {
         {
             let mut var: Result<Variable, Exception> = Ok($variable.clone());
@@ -67,15 +66,43 @@ macro_rules! basil {
             }
         }
     };
+    ($variable:ident $([$member:expr])+) => {
+        {
+            let mut var: Result<Variable, Exception> = Ok($variable.clone());
+            $(
+                if let Ok(var2) = var {
+                    let member = basil_core::object::Object::from($member);
+                    let next = var2.get_member(member, Object::basic_hash, Object::basic_eq);
+                    var = next;
+                }
+            )*
+            var
+        }
+    };
+    ($variable:ident $([$member:expr])+ = $value:expr) => {
+        {
+            let mut var: Result<Variable, Exception> = Ok($variable.clone());
+            $(
+                if let Ok(var2) = var {
+                    let member = basil_core::object::Object::from($member);
+                    let next = var2.get_member(member, basil_core::object::Object::basic_hash, basil_core::object::Object::basic_eq);
+                    var = next;
+                }
+            )*
+            if let Ok(var) = var {
+                let mut borrowed = var;
+                borrowed.set_object($value);
+            } else {
+                panic!("{} is not a member of {}, so its value can't be set", stringify!($($member).*), stringify!($variable))
+            }
+        }
+    };
     ({}) => {
 
         basil_core::dictionary::Dictionary::new().into_variable()
 
 
      };
-    ($e:expr) => {
-        $e.into_variable()
-    }
 }
 
 impl Interpreter {
@@ -241,7 +268,7 @@ impl Interpreter {
         for (key, val) in class.definitions() {
             dictionary.insert(
                 Object::from(key),
-                Variable::from(val.clone()),
+                Variable::new(val.clone()),
                 Object::basic_hash,
                 Object::basic_eq,
             );
@@ -325,6 +352,7 @@ mod tests {
     #[test]
     fn set_member() {
         let mut dict = Dictionary::with_entries(&["var_name"]).into_variable();
+        println!("Dict: {:?}", dict);
         basil!(dict.var_name = true);
         println!("Dict: {:?}", dict);
         let var_name = basil!(dict.var_name).unwrap();
@@ -340,5 +368,25 @@ mod tests {
                 b
             );
         }
+    }
+
+    #[test]
+    fn variables_separate() {
+        let mut dict = Dictionary::with_entries(&["var1", "var2"]).into_variable();
+        let val = 0i64.into_variable();
+        basil!(dict.var1 = val.clone());
+        basil!(dict.var2 = val);
+        println!("{:?}", dict);
+        basil!(dict.var1 = 1i32);
+        println!("{:?}", dict);
+        let dict_var1 = basil!(dict.var1).unwrap();
+        basil!(dict.var2 = dict_var1);
+        println!("{:?}", dict);
+        basil!(dict.var1 = 2i32);
+        println!("{:?}", dict);
+        let dict_var1: i32 = basil!(dict["var1"]).unwrap().try_into().unwrap();
+        let dict_var2: i32 = basil!(dict["var2"]).unwrap().try_into().unwrap();
+        assert_eq!(dict_var1, 2);
+        assert_eq!(dict_var2, 1);
     }
 }

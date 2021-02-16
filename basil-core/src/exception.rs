@@ -18,7 +18,7 @@ impl Exception {
 impl<T: Into<Primitive>> From<T> for Exception {
     fn from(ty: T) -> Self {
         let p = ty.into();
-        Exception::new(Variable::from(Object::new(p)))
+        Exception::new(Variable::new(Object::new(p)))
     }
 }
 
