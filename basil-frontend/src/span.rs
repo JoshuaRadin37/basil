@@ -69,3 +69,19 @@ impl Span {
         }
     }
 }
+
+pub struct WithSpan<T>(T, Span);
+
+impl<T> WithSpan<T> {
+    pub fn new(ty: T, span: Span) -> Self {
+        WithSpan(ty, span)
+    }
+
+    pub fn get_object(&self) -> &T {
+        &self.0
+    }
+
+    pub fn get_span(&self) -> &Span {
+        &self.1
+    }
+}

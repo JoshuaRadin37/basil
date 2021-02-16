@@ -16,7 +16,7 @@ use basil_core::primitive::Primitive;
 use basil_core::statements::Statement;
 use basil_core::type_id::TypeId;
 use basil_core::variable::{IntoVariable, Variable};
-use basil_frontend::span::Span;
+use basil_frontend::span::{Span, WithSpan};
 
 use crate::context::{Context, ContextGraph, Entry};
 use crate::frame::Frame;
@@ -137,7 +137,8 @@ impl Interpreter {
         self.frame_stack.pop()
     }
 
-    pub fn execute_block(&mut self, block: &CodeBlock) -> Result<Variable, Exception> {
+    pub fn execute_block(&mut self, block: &WithSpan<CodeBlock>) -> Result<Variable, Exception> {
+        let block = block.get_object();
         let size = block.statements().len();
         for i in 0..(size - 1) {
             let statement = &block.statements()[i];
@@ -175,7 +176,12 @@ impl Interpreter {
         }
     }
 
-    pub fn execute_statement(&mut self, statement: &Statement) -> Result<Variable, Exception> {
+    pub fn execute_statement(
+        &mut self,
+        statement: &WithSpan<Statement>,
+    ) -> Result<Variable, Exception> {
+        let span = statement.get_span();
+        let statement = statement.get_object();
         match statement {
             Statement::Assignment(left, right) => {
                 let variable = self.evaluate_expression(right)?;
@@ -319,10 +325,11 @@ impl Interpreter {
         &mut self,
         name: String,
         object: &Variable,
-        function: &Function,
+        function: &WithSpan<Function>,
         positional_arguments: Vec<Variable>,
         keywords: Vec<(String, Variable)>,
     ) -> Result<Variable, Exception> {
+        let my_function = function.get_object();
         let object = object.to_inner().get();
         let object = object.get_mut();
         let type_id = object.type_id();
@@ -333,13 +340,13 @@ impl Interpreter {
 
         let mut context = self.context_graph.current_context();
 
-        for (capture, value) in function.captures() {
+        for (capture, value) in my_function.captures() {
             context.insert(capture.clone(), value.clone());
         }
 
-        let block = function.code_block();
+        let block = my_function.code_block();
 
-        // self.new_frame(name, )
+        self.new_frame(name, function.get_span().clone());
 
         self.context_graph.pop();
         self.context_graph.pop();
