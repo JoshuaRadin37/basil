@@ -10,3 +10,4 @@ edition = "2018"
 num-bigint = "0.3.1"
 num-rational = "0.3.2"
 num-traits = "0.2.14"
+basil-frontend = { path = "../basil-frontend" }

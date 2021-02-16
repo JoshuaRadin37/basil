@@ -1,5 +1,6 @@
 use std::borrow::Borrow;
 use std::cell::{Cell, Ref, RefCell};
+use std::fmt::{Debug, Formatter};
 use std::fs::File;
 use std::io::{ErrorKind, Read, Seek, SeekFrom};
 use std::ops::{Deref, Range};
@@ -68,13 +69,26 @@ impl Span {
             ))
         }
     }
+
+    pub fn empty() -> Span {
+        Self {
+            file: PathBuf::from("empty"),
+            characters: 0..1,
+            cache: RefCell::new("".to_string()),
+        }
+    }
 }
 
+#[derive(Clone)]
 pub struct WithSpan<T>(T, Span);
 
 impl<T> WithSpan<T> {
     pub fn new(ty: T, span: Span) -> Self {
         WithSpan(ty, span)
+    }
+
+    pub fn empty(ty: T) -> Self {
+        WithSpan(ty, Span::empty())
     }
 
     pub fn get_object(&self) -> &T {
@@ -83,5 +97,11 @@ impl<T> WithSpan<T> {
 
     pub fn get_span(&self) -> &Span {
         &self.1
+    }
+}
+
+impl<T: Debug> Debug for WithSpan<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self.0)
     }
 }
