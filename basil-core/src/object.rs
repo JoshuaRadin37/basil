@@ -2,10 +2,11 @@ use crate::dictionary::Dictionary;
 use crate::exception::Exception;
 use crate::primitive::Primitive;
 use crate::type_id::{Explicit, TypeId};
+use std::fmt::{Debug, Formatter};
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Object {
     type_id: TypeId,
     primitive: Primitive,
@@ -97,5 +98,14 @@ impl From<String> for Object {
 impl From<&String> for Object {
     fn from(s: &String) -> Self {
         Object::new(Primitive::from(s))
+    }
+}
+
+impl Debug for Object {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        if let TypeId::Explicit(Explicit(e)) = self.type_id {
+            write!(f, "Type {} ", e)?;
+        }
+        write!(f, "{:?}", self.primitive)
     }
 }

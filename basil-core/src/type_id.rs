@@ -16,7 +16,7 @@ impl Implicit {
 }
 
 #[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq, Hash)]
-pub struct Explicit(u64);
+pub struct Explicit(pub u64);
 
 impl Explicit {
     pub fn new(id: u64) -> Self {

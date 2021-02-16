@@ -12,9 +12,10 @@ use crate::type_id::Implicit;
 use crate::variable::{IntoVariable, Variable};
 use std::collections::hash_map::DefaultHasher;
 use std::convert::TryFrom;
+use std::fmt::{Debug, Formatter};
 use std::hash::{Hash, Hasher};
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub enum Primitive {
     None,
     Integer(BigInt),
@@ -119,6 +120,40 @@ impl TryFrom<&Primitive> for bool {
             Ok(*ret)
         } else {
             Err("Not a boolean value")?
+        }
+    }
+}
+
+impl Debug for Primitive {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Primitive::None => {
+                write!(f, "None")
+            }
+            Primitive::Integer(i) => {
+                write!(f, "{}", i)
+            }
+            Primitive::Float(fl) => {
+                write!(f, "{}", fl)
+            }
+            Primitive::String(s) => {
+                write!(f, "\"{}\"", s)
+            }
+            Primitive::Boolean(b) => {
+                write!(f, "{}", b)
+            }
+            Primitive::List(l) => {
+                write!(f, "{:?}", l)
+            }
+            Primitive::Dictionary(d) => {
+                write!(f, "{:?}", d)
+            }
+            Primitive::Function(_) => {
+                unimplemented!()
+            }
+            Primitive::Class(_) => {
+                unimplemented!()
+            }
         }
     }
 }
