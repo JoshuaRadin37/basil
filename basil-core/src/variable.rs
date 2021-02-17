@@ -87,6 +87,42 @@ impl Variable {
         Ok(variable.clone())
     }
 
+    pub fn get_member_or_create<
+        Hash: FnMut(&mut Object) -> u64 + Clone,
+        Eq: FnMut(&mut Object, &mut Object) -> bool + Clone,
+    >(
+        &self,
+        mut member: Object,
+        hash: Hash,
+        eq: Eq,
+    ) -> Result<Variable, Exception> {
+        let inner = self.to_inner();
+        let borrow = inner.get();
+        let mut x = borrow.get_mut();
+        let dictionary = x
+            .get_dictionary_mut()
+            .ok_or_else(|| Exception::from(format!("{:?} is not a dictionary", borrow)))?;
+        // This is the variable representing what the dictionary is pointing to
+        // in C terms, &(dict->member)
+        //  We want to create a new pointer to the inner pointer
+        if dictionary
+            .get(&mut member, hash.clone(), eq.clone())
+            .is_none()
+        {
+            dictionary.insert(
+                member.clone(),
+                Primitive::None.into_variable(),
+                hash.clone(),
+                eq.clone(),
+            );
+        }
+
+        let variable = dictionary.get(&mut member, hash, eq).ok_or_else(|| {
+            Exception::from(format!("{:?} is not a member of {:?}", member, self))
+        })?;
+        Ok(variable.clone())
+    }
+
     /*
     pub fn get_member_mut<
         Hash: FnMut(&mut Object) -> u64,

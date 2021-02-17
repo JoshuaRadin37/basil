@@ -9,4 +9,5 @@ edition = "2018"
 [dependencies]
 petgraph = "0.5"
 basil-core = { path="../basil-core" }
-basil-frontend = {path="../basil-frontend"}
+basil-frontend = {path="../basil-frontend" }
+basil-derive = { path = "../basil-derive" }

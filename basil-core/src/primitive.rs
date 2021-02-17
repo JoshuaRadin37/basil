@@ -8,6 +8,7 @@ use crate::dictionary::Dictionary;
 use crate::exception::Exception;
 use crate::function::Function;
 use crate::object::{DeepClone, Object};
+use crate::span::WithSpan;
 use crate::type_id::Implicit;
 use crate::variable::{IntoVariable, Variable};
 use std::collections::hash_map::DefaultHasher;
@@ -24,8 +25,8 @@ pub enum Primitive {
     Boolean(bool),
     List(Vec<Object>),
     Dictionary(Dictionary),
-    Function(Function),
-    Class(Class),
+    Function(WithSpan<Function>),
+    Class(WithSpan<Class>),
 }
 
 impl Primitive {

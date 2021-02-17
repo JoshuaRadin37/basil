@@ -50,6 +50,14 @@ impl Object {
     pub fn basic_hash(&mut self) -> u64 {
         self.as_primitive_mut().basic_hash()
     }
+
+    pub fn is_class_object(&self) -> bool {
+        if let TypeId::Explicit(Explicit(_)) = self.type_id {
+            true
+        } else {
+            false
+        }
+    }
 }
 
 pub trait DeepClone {

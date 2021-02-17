@@ -13,10 +13,10 @@ use basil_core::expression::{Expression, ExpressionTail};
 use basil_core::function::Function;
 use basil_core::object::Object;
 use basil_core::primitive::Primitive;
+use basil_core::span::{Span, WithSpan};
 use basil_core::statements::Statement;
 use basil_core::type_id::TypeId;
 use basil_core::variable::{IntoVariable, Variable};
-use basil_frontend::span::{Span, WithSpan};
 
 use crate::context::{Context, ContextGraph, Entry};
 use crate::frame::Frame;
@@ -54,7 +54,7 @@ macro_rules! basil {
             $(
                 if let Ok(var2) = var {
                     let member = basil_core::object::Object::from(stringify!($member));
-                    let next = var2.get_member(member, basil_core::object::Object::basic_hash, basil_core::object::Object::basic_eq);
+                    let next = var2.get_member_or_create(member, basil_core::object::Object::basic_hash, basil_core::object::Object::basic_eq);
                     var = next;
                 }
             )*
@@ -85,7 +85,7 @@ macro_rules! basil {
             $(
                 if let Ok(var2) = var {
                     let member = basil_core::object::Object::from($member);
-                    let next = var2.get_member(member, basil_core::object::Object::basic_hash, basil_core::object::Object::basic_eq);
+                    let next = var2.get_member_or_create(member, basil_core::object::Object::basic_hash, basil_core::object::Object::basic_eq);
                     var = next;
                 }
             )*
@@ -182,6 +182,7 @@ impl Interpreter {
     ) -> Result<Variable, Exception> {
         let span = statement.get_span();
         let statement = statement.get_object();
+        self.current_frame_mut().set_current_span(span);
         match statement {
             Statement::Assignment(left, right) => {
                 let variable = self.evaluate_expression(right)?;
@@ -227,8 +228,25 @@ impl Interpreter {
         }
     }
 
-    pub fn repr(&mut self, var: &Variable) -> String {
-        unimplemented!()
+    pub fn repr(&mut self, var: &Variable) -> Result<String, Exception> {
+        let object_ptr = var.get_object();
+        let object = object_ptr.get();
+        if !object.is_class_object() {
+            return Ok(format!("{:?}", object.as_primitive()));
+        }
+        std::mem::drop(object);
+
+        let repr_result = basil!(var.__repr__);
+        if let Ok(repr) = repr_result {
+            let object_ptr = repr.get_object();
+            let object = object_ptr.get();
+            let primitive = object.as_primitive();
+            if let Primitive::Function(f) = primitive {
+                self.call_method("__repr__".to_string(), var, f, vec![], vec![]);
+            }
+        }
+
+        Err("A class object must have a __repr__ member that is a function")?
     }
 
     pub fn evaluate_expression(
@@ -256,8 +274,8 @@ impl Interpreter {
                 } else {
                     Err(format!(
                         "{} is not a member of {}",
-                        self.repr(&member.into_variable()),
-                        self.repr(head)
+                        self.repr(&member.into_variable())?,
+                        self.repr(head)?
                     ))?
                 }
             }
@@ -414,5 +432,13 @@ mod tests {
         basil!(dict1.var1.var3 = "Goodbye, World!");
         println!("{:?}", dict1);
         println!("{:?}", dict2);
+    }
+
+    #[test]
+    fn set_val() {
+        let mut dict = Dictionary::new().into_variable();
+        basil!(dict.yeet = "hello world");
+        let string: String = String::try_from(basil!(dict.yeet).unwrap()).unwrap();
+        assert_eq!(string, "hello world");
     }
 }

@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 basil-frontend = { path = "../basil-frontend"}
+basil-core = { path = "../basil-core"}

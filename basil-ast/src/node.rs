@@ -1,5 +1,5 @@
-use basil_frontend::span::Span;
 use crate::operators::Operator;
+use basil_core::span::Span;
 use std::fmt::Display;
 
 #[derive(Debug)]
@@ -14,35 +14,35 @@ pub enum NodeType {
     Identifier(String),
     QualifiedIdentifier {
         parent: Node,
-        child: Node
+        child: Node,
     },
     Assignment {
         lhs: Node,
         var_type: Option<Node>,
-        rhs: Node
+        rhs: Node,
     },
     Function {
         name: Node,
-        parameters: Vec<Node>
+        parameters: Vec<Node>,
     },
     FunctionCall {
         name: Node,
-        parameters: Vec<Node>
+        parameters: Vec<Node>,
     },
     BinaryExpression {
         lhs: Node,
         rhs: Node,
-        op: Node
+        op: Node,
     },
     UnaryExpression {
         val: Node,
-        op: Node
+        op: Node,
     },
     Operator(Operator),
     If {
         condition: Node,
         block: Node,
-        r#else: Option<Node>
+        r#else: Option<Node>,
     },
     While {
         condition: Node,
@@ -50,7 +50,7 @@ pub enum NodeType {
     },
     For {
         identifier: Node,
-        iterator: Node
+        iterator: Node,
     },
     Break,
     Yield(Node),
@@ -58,8 +58,8 @@ pub enum NodeType {
     Class {
         name: Node,
         parent: Option<Node>,
-        defs: Vec<Node>
+        defs: Vec<Node>,
     },
     Block(Vec<Node>),
-    Import(Node)
+    Import(Node),
 }

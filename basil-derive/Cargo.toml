@@ -10,3 +10,7 @@ edition = "2018"
 proc-macro = true
 
 [dependencies]
+basil-core = { path = "../basil-core" }
+syn = { version="1.0", features=["default", "extra-traits"] }
+proc-macro2 = { version = "1.0", features = ["span-locations"]}
+quote = "1.0"

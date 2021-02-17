@@ -1,4 +1,4 @@
-use basil_frontend::span::Span;
+use basil_core::span::Span;
 
 pub struct Frame {
     name: String,

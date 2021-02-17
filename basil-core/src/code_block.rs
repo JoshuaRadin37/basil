@@ -1,7 +1,7 @@
 use crate::object::Object;
+use crate::span::WithSpan;
 use crate::statements::Statement;
 use crate::variable::Variable;
-use basil_frontend::span::WithSpan;
 
 #[derive(Debug, Clone)]
 pub struct CodeBlock {
