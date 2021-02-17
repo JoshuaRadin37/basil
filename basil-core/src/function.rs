@@ -1,5 +1,6 @@
 use crate::code_block::CodeBlock;
 use crate::object::Object;
+use crate::span::WithSpan;
 use crate::variable::Variable;
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
@@ -31,6 +32,10 @@ impl Function {
             keyword_arguments,
             code_block,
         }
+    }
+
+    pub fn empty_span(self) -> WithSpan<Self> {
+        WithSpan::empty(self)
     }
 }
 

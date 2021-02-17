@@ -13,6 +13,12 @@ impl CodeBlock {
         CodeBlock { statements }
     }
 
+    pub fn no_span<I: IntoIterator<Item = Statement>>(iter: I) -> Self {
+        CodeBlock {
+            statements: iter.into_iter().map(|s| WithSpan::empty(s)).collect(),
+        }
+    }
+
     pub fn statements(&self) -> &Vec<WithSpan<Statement>> {
         &self.statements
     }

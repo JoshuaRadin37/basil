@@ -1,4 +1,5 @@
 use crate::object::{DeepClone, Object};
+use crate::span::WithSpan;
 use crate::type_id::Explicit;
 use std::cell::RefCell;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -42,6 +43,10 @@ impl Class {
     }
     pub fn definitions(&self) -> &Vec<(String, Object)> {
         &self.definitions
+    }
+
+    pub fn empty_span(self) -> WithSpan<Self> {
+        WithSpan::empty(self)
     }
 }
 

@@ -1,3 +1,4 @@
+pub mod base;
 pub mod class;
 pub mod code_block;
 pub mod dictionary;
