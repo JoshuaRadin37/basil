@@ -11,21 +11,24 @@ static FUNCTION_COUNT: AtomicUsize = AtomicUsize::new(0);
 #[derive(Debug, Clone)]
 pub struct Function {
     id: usize,
+    name: String,
     captures: HashMap<String, Variable>,
     positional_arguments: Vec<String>,
     keyword_arguments: Vec<(String, Object)>,
-    code_block: CodeBlock,
+    code_block: WithSpan<CodeBlock>,
 }
 
 impl Function {
     pub fn new(
+        name: String,
         captures: HashMap<String, Variable>,
         positional_arguments: Vec<String>,
         keyword_arguments: Vec<(String, Object)>,
-        code_block: CodeBlock,
+        code_block: WithSpan<CodeBlock>,
     ) -> Self {
         let id = FUNCTION_COUNT.fetch_add(1, Ordering::Acquire);
         Function {
+            name,
             id,
             captures,
             positional_arguments,
@@ -54,7 +57,12 @@ impl Function {
         &self.keyword_arguments
     }
 
-    pub fn code_block(&self) -> &CodeBlock {
+    pub fn code_block(&self) -> &WithSpan<CodeBlock> {
         &self.code_block
+    }
+
+
+    pub fn name(&self) -> &String {
+        &self.name
     }
 }

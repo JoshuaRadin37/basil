@@ -3,21 +3,28 @@ use std::collections::HashMap;
 use crate::object::Object;
 use crate::variable::{IntoVariable, Variable};
 
+
+#[derive(Debug, Clone)]
+pub enum Atom {
+    Identifier(String),
+    Variable(Variable)
+}
+
 #[derive(Debug, Clone)]
 pub struct Expression {
-    head: Variable,
+    head: Atom,
     tail: Option<Box<ExpressionTail>>,
 }
 
 impl Expression {
-    pub fn new(head: Variable, tail: Option<ExpressionTail>) -> Self {
+    pub fn new(head: Atom, tail: Option<ExpressionTail>) -> Self {
         Expression {
             head,
             tail: tail.map(Box::new),
         }
     }
 
-    pub fn head(&self) -> &Variable {
+    pub fn head(&self) -> &Atom {
         &self.head
     }
 
@@ -28,7 +35,7 @@ impl Expression {
         }
     }
 
-    pub fn head_mut(&mut self) -> &mut Variable {
+    pub fn head_mut(&mut self) -> &mut Atom {
         &mut self.head
     }
 
@@ -44,8 +51,8 @@ impl Expression {
 pub enum ExpressionTail {
     GetMember(String),
     CallMethod {
-        positional: Vec<Variable>,
-        named: HashMap<String, Variable>,
+        positional: Vec<Expression>,
+        named: HashMap<String, Expression>,
     },
 }
 

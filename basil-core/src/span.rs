@@ -150,6 +150,13 @@ impl<T> WithSpan<T> {
     }
 }
 
+impl<T : Clone> From<&WithSpan<T>> for WithSpan<T> {
+    fn from(w: &WithSpan<T>) -> Self {
+        let borrow = &w.0;
+        WithSpan::new(borrow.clone(), w.1.clone())
+    }
+}
+
 impl<T: Debug> Debug for WithSpan<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self.0)

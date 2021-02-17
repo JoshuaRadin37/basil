@@ -301,6 +301,19 @@ impl<'a> CollectedContext<'a> {
             .data
             .insert(key, value);
     }
+
+    pub fn contains(&self, key: &String) -> bool {
+        for node in self.context_order.iter().filter_map(|id| {
+            self.data
+                .context_graph
+                .node_weight(*id)
+        }) {
+            if node.data.contains_key(key) {
+                return true;
+            }
+        }
+        false
+    }
 }
 
 impl<S: AsRef<str>> Index<S> for CollectedContext<'_> {

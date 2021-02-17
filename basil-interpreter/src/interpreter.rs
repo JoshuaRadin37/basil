@@ -9,7 +9,7 @@ use basil_core::class::Class;
 use basil_core::code_block::CodeBlock;
 use basil_core::dictionary::Dictionary;
 use basil_core::exception::Exception;
-use basil_core::expression::{Expression, ExpressionTail};
+use basil_core::expression::{Expression, ExpressionTail, Atom};
 use basil_core::function::Function;
 use basil_core::object::Object;
 use basil_core::primitive::Primitive;
@@ -146,7 +146,7 @@ impl Interpreter {
                 Ok(_) => {}
                 Err(e) => {
                     let inner_var = e.inner().clone();
-                    return Interpreter::to_block_output(e, inner_var);
+                    return Interpreter::form_block_output(e, inner_var);
                 }
             }
         }
@@ -155,7 +155,7 @@ impl Interpreter {
                 Ok(o) => Ok(o),
                 Err(e) => {
                     let inner_var = e.inner().clone();
-                    Interpreter::to_block_output(e, inner_var)
+                    Interpreter::form_block_output(e, inner_var)
                 }
             }
         } else {
@@ -163,7 +163,7 @@ impl Interpreter {
         }
     }
 
-    fn to_block_output(e: Exception, inner_var: Variable) -> Result<Variable, Exception> {
+    fn form_block_output(e: Exception, inner_var: Variable) -> Result<Variable, Exception> {
         if let Ok(is_return) = basil!(inner_var.__is_return__) {
             let x = is_return.to_inner().get();
             let object = x.get();
@@ -187,6 +187,8 @@ impl Interpreter {
             Statement::Assignment(left, right) => {
                 let variable = self.evaluate_expression(right)?;
                 let mut current_context = self.context_graph.current_context();
+                let mut assign_to = self.evaluate_expression(left)?;
+                /*
                 let mut entry = current_context.entry(left.clone());
 
                 match entry {
@@ -200,6 +202,9 @@ impl Interpreter {
                         Ok(x.clone())
                     }
                 }
+
+                 */
+                Ok(assign_to)
             }
             Statement::If {
                 condition,
@@ -249,11 +254,20 @@ impl Interpreter {
         Err("A class object must have a __repr__ member that is a function")?
     }
 
+    fn evaluate_atom(&mut self, atom: &Atom) -> Result<Variable, Exception>{
+        match atom {
+            Atom::Identifier(id) => {
+                Ok(self.context_graph.current_context().entry(id.clone()).or_insert(Primitive::None.into_variable()).clone())
+            }
+            Atom::Variable(v) => { Ok(v.clone()) }
+        }
+    }
+
     pub fn evaluate_expression(
         &mut self,
         mut expression: &Expression,
     ) -> Result<Variable, Exception> {
-        let mut head = expression.head();
+        let mut head = self.evaluate_atom(expression.head())?;
         let tail = expression.tail();
 
         if tail.is_none() {
@@ -268,19 +282,41 @@ impl Interpreter {
                 let mut member_primitive: Object = Primitive::from(member).into();
                 if let Primitive::Dictionary(dict) = inner.as_primitive() {
                     let member =
-                        dict.get(&mut member_primitive, Object::basic_hash, Object::basic_eq);
-
-                    unimplemented!()
+                        dict.get(&mut member_primitive, Object::basic_hash, Object::basic_eq)
+                            .cloned();
+                    member.ok_or_else(|| Exception::from(format!("{:?} is not a member of {}", member_primitive, self.repr(&head).unwrap())))
                 } else {
                     Err(format!(
                         "{} is not a member of {}",
                         self.repr(&member.into_variable())?,
-                        self.repr(head)?
+                        self.repr(&head)?
                     ))?
                 }
             }
             ExpressionTail::CallMethod { positional, named } => {
-                unimplemented!()
+                let obj_ptr = head.get_object();
+                let obj = obj_ptr.get();
+                if let Primitive::Function(func) = obj.as_primitive() {
+                    let mut eval_positional = vec![];
+                    for expr in positional {
+                        eval_positional.push(self.evaluate_expression(expr)?);
+                    }
+
+                    let mut kw = vec![];
+                    for (name, expr) in named {
+                        kw.push((name.clone(), self.evaluate_expression(expr)?))
+                    }
+
+
+                    self.call_function(
+                        func.get_object().name().clone(),
+                        func,
+                        eval_positional,
+                        kw
+                    )
+                } else {
+                    Err(format!("{:?} is not a function", head))?
+                }
             }
         }
     }
@@ -347,6 +383,7 @@ impl Interpreter {
         positional_arguments: Vec<Variable>,
         keywords: Vec<(String, Variable)>,
     ) -> Result<Variable, Exception> {
+        let var = object;
         let my_function = function.get_object();
         let object = object.to_inner().get();
         let object = object.get_mut();
@@ -356,20 +393,102 @@ impl Interpreter {
         self.context_graph.shift_to_scope(node_index); // shifts to the class scope
         self.context_graph.higher_scope();
 
+        self.context_graph.current_context()
+            .insert("this".to_string(), var.clone());
+
+
+        let output = self.call_function(name, function, positional_arguments, keywords);
+
+
+        /*
+
+
         let mut context = self.context_graph.current_context();
 
         for (capture, value) in my_function.captures() {
             context.insert(capture.clone(), value.clone());
         }
 
+        let mut position_arguments_iter = function.get_object().positional_arguments()
+            .iter()
+            .zip(positional_arguments.into_iter());
+
+        for (name, value) in position_arguments_iter {
+            context.insert(name.clone(), value)
+        }
+
+        for (name, value) in keywords {
+            context.insert(name, value)
+        }
+
+        for (name, value) in function.get_object().keyword_arguments() {
+            if !context.contains(name) {
+                context.insert(name.clone(), Variable::from(value.clone()))
+            }
+        }
+
         let block = my_function.code_block();
 
         self.new_frame(name, function.get_span().clone());
 
+        let output = self.execute_block(block);
+
+        self.pop_frame();
+
+
+
+         */
+
+
         self.context_graph.pop();
         self.context_graph.pop();
 
-        unimplemented!()
+        output
+    }
+
+    fn call_function(&mut self, name: String, function: &WithSpan<Function>, positional_arguments: Vec<Variable>,
+                     keywords: Vec<(String, Variable)>) -> Result<Variable, Exception>
+    {
+
+        let my_function = function.get_object();
+
+        self.context_graph.higher_scope();
+
+        let mut context = self.context_graph.current_context();
+
+        for (capture, value) in my_function.captures() {
+            context.insert(capture.clone(), value.clone());
+        }
+
+        let mut position_arguments_iter = function.get_object().positional_arguments()
+            .iter()
+            .zip(positional_arguments.into_iter());
+
+        for (name, value) in position_arguments_iter {
+            context.insert(name.clone(), value)
+        }
+
+        for (name, value) in keywords {
+            context.insert(name, value)
+        }
+
+        for (name, value) in function.get_object().keyword_arguments() {
+            if !context.contains(name) {
+                context.insert(name.clone(), Variable::from(value.clone()))
+            }
+        }
+
+        let block = my_function.code_block();
+
+        self.new_frame(name, function.get_span().clone());
+
+        let output = self.execute_block(block);
+
+        self.pop_frame();
+
+        self.context_graph.pop();
+
+        output
     }
 }
 

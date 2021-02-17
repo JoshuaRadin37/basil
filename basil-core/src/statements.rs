@@ -4,6 +4,7 @@ use crate::variable::Variable;
 
 #[derive(Debug, Clone)]
 pub enum Statement {
+
     Assignment(Expression, Expression),
     If {
         condition: Expression,
